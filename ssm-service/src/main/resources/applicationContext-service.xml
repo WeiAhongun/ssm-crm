@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/tx https://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+<!--
+    包扫描
+    事务管理器
+    事务驱动
+-->
+    <context:component-scan base-package="com.sm.cn.service"/>
+
+    <!--配置事务管理器-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <!--开启事务-->
+    <tx:annotation-driven/>
+
+    <!--配置异步任务-->
+    <!--<task:annotation-driven/>-->
+    <task:scheduler id="myScheduler" pool-size="10"/>
+    <task:annotation-driven executor="myScheduler"/>
+
+    <!--corsFilter-->
+    <bean class="org.springframework.web.filter.CorsFilter" id="corsFilter">
+        <constructor-arg name="configSource">
+            <bean class="org.springframework.web.cors.UrlBasedCorsConfigurationSource">
+                <property name="corsConfigurations">
+                    <map>
+                        <entry key="/**">
+                            <bean class="org.springframework.web.cors.CorsConfiguration">
+                                <property name="allowCredentials" value="true"/>
+                                <property name="allowedHeaders" value="*"/>
+                                <property name="allowedMethods" value="*"/>
+                                <property name="allowedOrigins" value="*"/>
+                            </bean>
+                        </entry>
+                    </map>
+                </property>
+            </bean>
+        </constructor-arg>
+    </bean>
+</beans>
